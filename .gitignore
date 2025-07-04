@@ -1,0 +1,4 @@
+dofus_init
+dofus_switch
+logs/*
+dofus.lock
