@@ -55,21 +55,14 @@ Time get_time(const xdo_t *xt, Window w)
     return *res;
 }
 
-Window get_previous_player(const xdo_t *xt, Window w)
+Window get_property_window(const xdo_t *xt, Window w, const char* property_name)
 {
     Window* res;
-    int ret = _get_property(xt, w, XA_PREV_P, (unsigned char**)&res);
-    if (ret != XDO_SUCCESS)
-        cerr << "get_previous_player on window: " << w << " reported an error" << endl;
-    return *res;
-}
-
-Window get_next_player(const xdo_t *xt, Window w)
-{
-    Window* res;
-    int ret = _get_property(xt, w, XA_NEXT_P, (unsigned char**)&res);
-    if (ret != XDO_SUCCESS)
-        cerr << "get_next_player on window: " << w << " reported an error" << endl;
+    int ret = _get_property(xt, w, property_name, (unsigned char**)&res);
+    if (ret != XDO_SUCCESS){
+        cerr << "get_property_window on window: " << w << " reported an error" << endl;
+        return 0;
+    }
     return *res;
 }
 
@@ -82,7 +75,7 @@ filesystem::path get_path(initializer_list<const char*> dirs)
 {
     filesystem::path res = _getExecutablePath();
     for(auto d : dirs)
-    res = res / d;
+        res = res / d;
     return res;
 }
 

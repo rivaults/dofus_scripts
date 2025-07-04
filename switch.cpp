@@ -12,16 +12,6 @@ const char* const CMD_KEY = "key";
 const char* const CMD_MOUSE = "mouse";
 const char* const CMD_PREV = "prev";
 const char* const CMD_NEXT = "next";
-const char* const CMD_FISHER_CYCLE = "fisher-cycle";
-const char* const CMD_FISHER = "fisher";
-const char* const CMD_FISHER_ENABLE = "fisher.enable";
-const char* const CMD_FISHER_DELAY = "fisher.delay";
-const char* const CMD_FISHER_NAME = "fisher.name";
-const char* const CMD_SADIDA_CYCLE = "sadida-cycle";
-const char* const CMD_SADIDA = "sadida";
-const char* const CMD_SADIDA_ENABLE = "sadida.enable";
-const char* const CMD_SADIDA_DELAY = "sadida.delay";
-const char* const CMD_SADIDA_NAME = "sadida.name";
 
 charcodemap_t* _get_charmapcode(const xdo_t* xt, const char* key){
     KeySym symbol = XStringToKeysym(key);
@@ -79,17 +69,16 @@ void update_timestamp(const xdo_t* xt, Window w){
 }
 
 void update_property(const xdo_t* xt, Window w_curr, Window w_next, int not_in_cycle){
-    Window p = get_next_player(xt, w_curr);
-    set_property(xt, w_next, XA_NEXT_P, p);
-    set_property(xt, w_next, XA_PREV_P, p);
+    Window n_w = get_property_window(xt, w_curr, XA_NEXT_P);
+    Window p_w = get_property_window(xt, w_curr, XA_PREV_P);
+    set_property(xt, w_next, XA_NEXT_P, n_w);
+    set_property(xt, w_next, XA_PREV_P, (not_in_cycle) ? p_w : n_w);
     update_timestamp(xt, w_next);
 }
 
 Window get_next_window(const xdo_t* xt, po::variables_map vm, Window w_curr){
-    Window w_sadida = 0;
-    get_dofus_window(xt, (char*)vm[CMD_SADIDA_NAME].as<string>().data(), &w_sadida);
-    Window w_fish = 0;
-    get_dofus_window(xt, (char*)vm[CMD_FISHER_NAME].as<string>().data(), &w_fish);
+    Window w_sadida = get_property_window(xt, w_curr, XA_SADIDA_W);
+    Window w_fish = get_property_window(xt, w_curr, XA_FISHER_W);
     Window res;
     bool timeout_sadida = w_sadida != 0 && vm.count(CMD_SADIDA_CYCLE) && compare_timestamp(xt, w_sadida, vm[CMD_SADIDA_DELAY].as<int>());
     bool timeout_fish = w_fish != 0 && vm.count(CMD_FISHER_CYCLE) && compare_timestamp(xt, w_fish, vm[CMD_FISHER_DELAY].as<int>());
@@ -105,9 +94,9 @@ Window get_next_window(const xdo_t* xt, po::variables_map vm, Window w_curr){
         res = w_fish;
     }
     else if (vm.count(CMD_PREV)){
-        res = get_previous_player(xt, w_curr);
+        res = get_property_window(xt, w_curr, XA_PREV_P);
     }else{
-        res = get_next_player(xt, w_curr);
+        res = get_property_window(xt, w_curr, XA_NEXT_P);
     }
     return res;
 }
