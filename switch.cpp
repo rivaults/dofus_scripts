@@ -72,7 +72,7 @@ void update_property(const xdo_t* xt, Window w_curr, Window w_next, int not_in_c
     Window n_w = get_property_window(xt, w_curr, XA_NEXT_P);
     Window p_w = get_property_window(xt, w_curr, XA_PREV_P);
     set_property(xt, w_next, XA_NEXT_P, n_w);
-    set_property(xt, w_next, XA_PREV_P, (not_in_cycle) ? p_w : n_w);
+    set_property(xt, w_next, XA_PREV_P, (not_in_cycle) ? w_curr : n_w);
     update_timestamp(xt, w_next);
 }
 

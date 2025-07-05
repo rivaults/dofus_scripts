@@ -35,6 +35,7 @@ vector<Window> get_players_windows(const xdo_t* xt, vector<string> players){
 
 int main(int argc, char* argv[]) {
     po::options_description desc("Allowed options");
+    // TODO
     desc.add_options()
         (CMD_PERSO, po::value<string>()->default_value(PERSO_FILE), "initiatives")
         (CMD_FISHER, "switch to the fisher")
